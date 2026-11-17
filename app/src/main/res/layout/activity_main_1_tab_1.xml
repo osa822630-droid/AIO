@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/bottomTabs"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_margin="@dimen/_4"
+  android:baselineAligned="false"
+  android:orientation="horizontal"
+  tools:ignore="ContentDescription,UseAppTint">
+
+  <!-- Tab 1: Speed Downloader Studio (Home) -->
+  <LinearLayout
+    android:id="@+id/btnHomeTab"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_2"
+    android:layout_weight="1"
+    android:background="@drawable/bg_button_negative"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/_4"
+    android:paddingBottom="@dimen/_4">
+
+    <ImageView
+      android:id="@+id/imgHomeTab"
+      android:layout_width="@dimen/_20"
+      android:layout_height="@dimen/_20"
+      android:layout_gravity="center"
+      android:src="@drawable/ic_home_tab"
+      android:tint="@color/style_color_text_primary" />
+
+    <TextView
+      android:id="@+id/tvHomeTab"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_2"
+      android:ellipsize="end"
+      android:fontFamily="@font/font_family_semibold"
+      android:gravity="center"
+      android:maxLines="1"
+      android:text="@string/tab_speed_studio"
+      android:textColor="@color/style_color_text_primary"
+      android:textSize="@dimen/small_text_size" />
+  </LinearLayout>
+
+  <!-- Tab 2: Local Media Speed Converter -->
+  <LinearLayout
+    android:id="@+id/btnMusicTab"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_2"
+    android:layout_weight="1"
+    android:background="@drawable/bg_button_negative"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/_4"
+    android:paddingBottom="@dimen/_4">
+
+    <ImageView
+      android:id="@+id/imgMusicTab"
+      android:layout_width="@dimen/_20"
+      android:layout_height="@dimen/_20"
+      android:layout_gravity="center"
+      android:src="@drawable/ic_speed_meter"
+      android:tint="@color/style_color_text_primary" />
+
+    <TextView
+      android:id="@+id/tvMusicsTab"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_2"
+      android:ellipsize="end"
+      android:fontFamily="@font/font_family_regular"
+      android:gravity="center"
+      android:maxLines="1"
+      android:text="@string/tab_local_speed"
+      android:textColor="@color/style_color_text_primary"
+      android:textSize="@dimen/small_text_size" />
+  </LinearLayout>
+
+  <!-- Tab 3: Downloads Manager -->
+  <LinearLayout
+    android:id="@+id/btnFilesTab"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_2"
+    android:layout_weight="1"
+    android:background="@drawable/bg_button_negative"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/_4"
+    android:paddingBottom="@dimen/_4">
+
+    <ImageView
+      android:id="@+id/imgFilesTab"
+      android:layout_width="@dimen/_20"
+      android:layout_height="@dimen/_20"
+      android:layout_gravity="center"
+      android:src="@drawable/ic_cloud_download"
+      android:tint="@color/style_color_text_primary" />
+
+    <TextView
+      android:id="@+id/tvFilesTab"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_2"
+      android:ellipsize="end"
+      android:fontFamily="@font/font_family_regular"
+      android:gravity="center"
+      android:maxLines="1"
+      android:text="@string/tab_downloads"
+      android:textColor="@color/style_color_text_primary"
+      android:textSize="@dimen/small_text_size" />
+  </LinearLayout>
+
+  <!-- Legacy placeholders kept gone for ViewBinding compatibility if referenced -->
+  <LinearLayout
+    android:id="@+id/btnMoviesTab"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:visibility="gone">
+    <ImageView android:id="@+id/imgMoviesTab" android:layout_width="0dp" android:layout_height="0dp" />
+    <TextView android:id="@+id/tvMoviesTab" android:layout_width="0dp" android:layout_height="0dp" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:id="@+id/btnGamesTab"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:visibility="gone">
+    <ImageView android:id="@+id/imgGamesTab" android:layout_width="0dp" android:layout_height="0dp" />
+    <TextView android:id="@+id/tvGamesTab" android:layout_width="0dp" android:layout_height="0dp" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:id="@+id/btnBrowserTab"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:visibility="gone">
+    <ImageView android:id="@+id/imgBrowserTab" android:layout_width="0dp" android:layout_height="0dp" />
+    <TextView android:id="@+id/tvBrowserTab" android:layout_width="0dp" android:layout_height="0dp" />
+  </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@color/style_color_background"
+  android:fillViewport="true">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/_14"
+    android:paddingTop="@dimen/_32"
+    android:paddingEnd="@dimen/_14"
+    android:paddingBottom="@dimen/_32">
+
+    <!-- Header -->
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <ImageView
+        android:id="@+id/btnSettingsBack"
+        android:layout_width="@dimen/_34"
+        android:layout_height="@dimen/_34"
+        android:background="@drawable/bg_button_negative"
+        android:padding="@dimen/_7"
+        android:src="@drawable/ic_arrow_back"
+        android:tint="@color/style_color_text_primary"
+        tools:ignore="ContentDescription,UseAppTint" />
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10"
+        android:layout_weight="1"
+        android:fontFamily="@font/font_family_bold"
+        android:text="@string/title_settings"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/title_text_size" />
+    </LinearLayout>
+
+    <!-- Section 1: Storage & Queue -->
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_16"
+      android:fontFamily="@font/font_family_bold"
+      android:text="@string/section_storage_downloads"
+      android:textColor="@color/style_color_primary"
+      android:textSize="@dimen/small_text_size" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_6"
+      android:background="@color/style_color_card"
+      android:orientation="vertical"
+      android:padding="@dimen/_12">
+
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/font_family_semibold"
+        android:text="@string/label_download_location"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/message_text_size" />
+
+      <TextView
+        android:id="@+id/tvCurrentDownloadPath"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4"
+        android:fontFamily="@font/font_family_regular"
+        android:text=""
+        android:textColor="@color/style_color_text_secondary"
+        android:textSize="@dimen/smaller_text_size" />
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8"
+        android:orientation="horizontal">
+
+        <TextView
+          android:id="@+id/btnChooseCustomFolder"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_34"
+          android:layout_marginEnd="@dimen/_4"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_accent"
+          android:fontFamily="@font/font_family_semibold"
+          android:gravity="center"
+          android:text="@string/btn_choose_custom_folder"
+          android:textColor="@color/style_color_text_inverse"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnUsePublicDownloads"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_34"
+          android:layout_marginEnd="@dimen/_4"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:fontFamily="@font/font_family_semibold"
+          android:gravity="center"
+          android:text="@string/btn_use_public_downloads"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnUsePrivateFolder"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_34"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:fontFamily="@font/font_family_semibold"
+          android:gravity="center"
+          android:text="@string/btn_use_private_folder"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+      </LinearLayout>
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchSmartSubfolders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10"
+        android:fontFamily="@font/font_family_medium"
+        android:text="@string/label_smart_subfolders"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/small_text_size" />
+
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10"
+        android:fontFamily="@font/font_family_semibold"
+        android:text="@string/label_max_concurrent_downloads"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/message_text_size" />
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_6"
+        android:orientation="horizontal">
+
+        <TextView
+          android:id="@+id/btnConc1"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_34"
+          android:layout_marginEnd="@dimen/_6"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:fontFamily="@font/font_family_bold"
+          android:gravity="center"
+          android:text="1"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/small_text_size" />
+
+        <TextView
+          android:id="@+id/btnConc2"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_34"
+          android:layout_marginEnd="@dimen/_6"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_accent"
+          android:fontFamily="@font/font_family_bold"
+          android:gravity="center"
+          android:text="2"
+          android:textColor="@color/style_color_text_inverse"
+          android:textSize="@dimen/small_text_size" />
+
+        <TextView
+          android:id="@+id/btnConc3"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_34"
+          android:layout_marginEnd="@dimen/_6"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:fontFamily="@font/font_family_bold"
+          android:gravity="center"
+          android:text="3"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/small_text_size" />
+
+        <TextView
+          android:id="@+id/btnConc4"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_34"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:fontFamily="@font/font_family_bold"
+          android:gravity="center"
+          android:text="4"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/small_text_size" />
+      </LinearLayout>
+    </LinearLayout>
+
+    <!-- Section 2: Default Speed & Quality -->
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_14"
+      android:fontFamily="@font/font_family_bold"
+      android:text="@string/section_speed_defaults"
+      android:textColor="@color/style_color_primary"
+      android:textSize="@dimen/small_text_size" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_6"
+      android:background="@color/style_color_card"
+      android:orientation="vertical"
+      android:padding="@dimen/_12">
+
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/font_family_semibold"
+        android:text="@string/label_default_speed"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/message_text_size" />
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_6"
+        android:orientation="horizontal">
+
+        <TextView
+          android:id="@+id/btnDefSpd100"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_marginEnd="@dimen/_4"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="1.0x"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnDefSpd125"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_marginEnd="@dimen/_4"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="1.25x"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnDefSpd150"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_marginEnd="@dimen/_4"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_accent"
+          android:gravity="center"
+          android:text="1.5x"
+          android:textColor="@color/style_color_text_inverse"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnDefSpd175"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_marginEnd="@dimen/_4"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="1.75x"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnDefSpd200"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="2.0x"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+      </LinearLayout>
+
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10"
+        android:fontFamily="@font/font_family_semibold"
+        android:text="@string/label_default_quality"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/message_text_size" />
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_6"
+        android:orientation="horizontal">
+
+        <TextView
+          android:id="@+id/btnDefQ1080"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_marginEnd="@dimen/_4"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="1080p"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnDefQ720"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_marginEnd="@dimen/_4"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_accent"
+          android:gravity="center"
+          android:text="720p"
+          android:textColor="@color/style_color_text_inverse"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnDefQ480"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_marginEnd="@dimen/_4"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="480p"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnDefQ360"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="360p"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+      </LinearLayout>
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchDefaultTurbo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10"
+        android:fontFamily="@font/font_family_medium"
+        android:text="@string/label_default_turbo"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/small_text_size" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchDefaultVoiceBoost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/font_family_medium"
+        android:text="@string/btn_voice_boost"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/small_text_size" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchDefaultSubtitles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/font_family_medium"
+        android:text="@string/btn_sync_subtitles"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/small_text_size" />
+    </LinearLayout>
+
+    <!-- Section 3: Network & App Preferences -->
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_14"
+      android:fontFamily="@font/font_family_bold"
+      android:text="@string/section_network_app"
+      android:textColor="@color/style_color_primary"
+      android:textSize="@dimen/small_text_size" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_6"
+      android:background="@color/style_color_card"
+      android:orientation="vertical"
+      android:padding="@dimen/_12">
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchWifiOnly"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/font_family_medium"
+        android:text="@string/label_wifi_only"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/small_text_size" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchCompletionSound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/font_family_medium"
+        android:text="@string/label_completion_sound"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/small_text_size" />
+
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8"
+        android:fontFamily="@font/font_family_semibold"
+        android:text="@string/label_theme_mode"
+        android:textColor="@color/style_color_text_primary"
+        android:textSize="@dimen/small_text_size" />
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_6"
+        android:orientation="horizontal">
+
+        <TextView
+          android:id="@+id/btnThemeSystem"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_marginEnd="@dimen/_6"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="@string/theme_system"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnThemeLight"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_marginEnd="@dimen/_6"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="@string/theme_light"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnThemeDark"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_32"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="@string/theme_dark"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+      </LinearLayout>
+
+      <TextView
+        android:id="@+id/btnSettingsLanguage"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_36"
+        android:layout_marginTop="@dimen/_10"
+        android:background="@drawable/bg_button_negative"
+        android:fontFamily="@font/font_family_semibold"
+        android:gravity="center"
+        android:text="@string/label_app_language"
+        android:textColor="@color/style_color_primary"
+        android:textSize="@dimen/small_text_size" />
+    </LinearLayout>
+
+    <!-- Section 4: Maintenance & Info -->
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_14"
+      android:fontFamily="@font/font_family_bold"
+      android:text="@string/section_maintenance"
+      android:textColor="@color/style_color_primary"
+      android:textSize="@dimen/small_text_size" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_6"
+      android:background="@color/style_color_card"
+      android:orientation="vertical"
+      android:padding="@dimen/_12">
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+          android:id="@+id/tvCacheSizeInfo"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:fontFamily="@font/font_family_medium"
+          android:text=""
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/small_text_size" />
+
+        <TextView
+          android:id="@+id/btnClearCache"
+          android:layout_width="wrap_content"
+          android:layout_height="@dimen/_32"
+          android:background="@drawable/bg_button_negative"
+          android:fontFamily="@font/font_family_semibold"
+          android:gravity="center"
+          android:paddingStart="@dimen/_12"
+          android:paddingEnd="@dimen/_12"
+          android:text="@string/btn_clear_cache"
+          android:textColor="@color/style_color_error"
+          android:textSize="@dimen/smaller_text_size" />
+      </LinearLayout>
+
+      <TextView
+        android:id="@+id/btnSettingsUpdateEngine"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_36"
+        android:layout_marginTop="@dimen/_10"
+        android:background="@drawable/bg_button_accent"
+        android:fontFamily="@font/font_family_semibold"
+        android:gravity="center"
+        android:text="@string/btn_update_engine"
+        android:textColor="@color/style_color_text_inverse"
+        android:textSize="@dimen/small_text_size" />
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10"
+        android:orientation="horizontal">
+
+        <TextView
+          android:id="@+id/btnSettingsAbout"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_34"
+          android:layout_marginEnd="@dimen/_4"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="@string/btn_about_app"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnSettingsPrivacy"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_34"
+          android:layout_marginEnd="@dimen/_4"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="@string/btn_privacy_policy"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+
+        <TextView
+          android:id="@+id/btnSettingsFeedback"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/_34"
+          android:layout_weight="1"
+          android:background="@drawable/bg_button_negative"
+          android:gravity="center"
+          android:text="@string/btn_send_feedback"
+          android:textColor="@color/style_color_text_primary"
+          android:textSize="@dimen/smaller_text_size" />
+      </LinearLayout>
+    </LinearLayout>
+
+  </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
