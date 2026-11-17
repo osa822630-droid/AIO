@@ -16,6 +16,12 @@ public final class YtSteamExtractor {
 
     private YtSteamExtractor() {}
 
+    public static boolean isYoutubeUrl(String url) {
+        if (url == null) return false;
+        String lower = url.toLowerCase();
+        return lower.contains("youtube.com") || lower.contains("youtu.be");
+    }
+
     public static String getThumbnail(String youtubeVideoUrl) {
         YtStreamInfo cached = YtStreamInfoRepo.findStreamInfo(youtubeVideoUrl);
         if (cached != null) return cached.thumbnailUrl;

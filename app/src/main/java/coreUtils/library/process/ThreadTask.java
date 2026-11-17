@@ -70,6 +70,10 @@ public final class ThreadTask<TaskResult, ProgressType> {
         });
     }
 
+    public void execute() {
+        start();
+    }
+
     public void start() {
         if (backgroundFutureTask != null && !backgroundFutureTask.isDone()) {
             logger.warning("Task already running");
@@ -231,7 +235,7 @@ public final class ThreadTask<TaskResult, ProgressType> {
     }
 
     public interface BackgroundTask<Result, Progress> {
-        Result runInBackground(@NonNull ProgressCallback<Progress> callback);
+        Result runInBackground(@NonNull ProgressCallback<Progress> callback) throws Exception;
     }
 
     public interface ResultTask<Result> {

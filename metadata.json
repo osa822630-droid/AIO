@@ -1,0 +1,6 @@
+{
+  "name": "TubeAIO",
+  "description": "TubeAIO NextGen video and music player and downloader application.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

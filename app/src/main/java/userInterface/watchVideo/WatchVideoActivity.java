@@ -12,7 +12,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.MimeTypes;
+import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;

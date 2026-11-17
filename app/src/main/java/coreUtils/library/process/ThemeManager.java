@@ -45,6 +45,14 @@ public final class ThemeManager {
         AppCompatDelegate.setDefaultNightMode(mode);
     }
 
+    public static int getSavedThemeMode(@NonNull Context context) {
+        return getSavedNightMode(context);
+    }
+
+    public static void setThemeMode(@NonNull Context context, int mode) {
+        setNightMode(context, mode);
+    }
+
     public static void toggleTheme(@NonNull BaseActivity<?> activity) {
         boolean currentlyDark = isDarkModeActive(activity);
         int nextMode = currentlyDark ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;

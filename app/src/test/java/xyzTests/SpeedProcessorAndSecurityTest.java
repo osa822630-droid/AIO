@@ -49,7 +49,7 @@ public class SpeedProcessorAndSecurityTest {
             String srt = "1\n00:01:00,000 --> 00:02:00,000\nHello World\n";
             Files.write(inSub.toPath(), srt.getBytes(StandardCharsets.UTF_8));
             assertTrue(SubtitleSpeedScaler.scaleSubtitleFile(inSub, outSub, 2.0f));
-            String result = Files.readString(outSub.toPath(), StandardCharsets.UTF_8);
+            String result = new String(Files.readAllBytes(outSub.toPath()), StandardCharsets.UTF_8);
             assertTrue(result.contains("00:00:30,000 --> 00:01:00,000"));
         } finally {
             inSub.delete();

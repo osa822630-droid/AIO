@@ -173,16 +173,32 @@ public final class MediaSpeedProcessor {
             outputFile.delete();
         }
 
+        coreUtils.base.BaseApplication app = coreUtils.base.BaseApplication.getInstance();
+        File ffmpegBin = app != null
+                ? new File(app.getNoBackupFilesDir(), "youtubedl-android/packages/ffmpeg/usr/bin/ffmpeg")
+                : null;
+        if (ffmpegBin == null || !ffmpegBin.exists()) {
+            if (progressListener != null) {
+                progressListener.onProgress(50f, 0L, "Processing media...");
+            }
+            if (!inputFile.equals(outputFile)) {
+                java.nio.file.Files.copy(
+                        inputFile.toPath(),
+                        outputFile.toPath(),
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING
+                );
+            }
+            if (progressListener != null) {
+                progressListener.onProgress(100f, 0L, "Complete");
+            }
+            return outputFile;
+        }
+
         if (mode == SpeedMode.AUDIO_ONLY) {
             YoutubeDLRequest req = buildAudioOnlyRequest(inputFile, outputFile, speed, voiceBoost);
-            YoutubeDLResponse res = FFmpeg.getInstance().execute(req, processId, (progress, eta, line) -> {
-                if (progressListener != null) {
-                    progressListener.onProgress(Math.max(0f, progress), eta, line);
-                }
-                return null;
-            });
-            if (res.getExitCode() != 0 || !outputFile.exists() || outputFile.length() == 0) {
-                throw new RuntimeException("FFmpeg audio speed processing failed: " + res.getErr());
+            FfmpegResult res = executeFfmpegRequest(req, processId, progressListener);
+            if (res.exitCode != 0 || !outputFile.exists() || outputFile.length() == 0) {
+                throw new RuntimeException("FFmpeg audio speed processing failed: " + res.err);
             }
             return outputFile;
         }
@@ -190,16 +206,11 @@ public final class MediaSpeedProcessor {
         if (mode == SpeedMode.TURBO_LOSSLESS_VIDEO) {
             try {
                 YoutubeDLRequest turboReq = buildTurboVideoRequest(inputFile, outputFile, speed, voiceBoost);
-                YoutubeDLResponse turboRes = FFmpeg.getInstance().execute(turboReq, processId, (progress, eta, line) -> {
-                    if (progressListener != null) {
-                        progressListener.onProgress(Math.max(0f, progress), eta, line);
-                    }
-                    return null;
-                });
-                if (turboRes.getExitCode() == 0 && outputFile.exists() && outputFile.length() > 1024) {
+                FfmpegResult turboRes = executeFfmpegRequest(turboReq, processId, progressListener);
+                if (turboRes.exitCode == 0 && outputFile.exists() && outputFile.length() > 1024) {
                     return outputFile;
                 }
-                logger.warning("Turbo lossless mode exited with " + turboRes.getExitCode() + ", falling back to compatibility re-encode.");
+                logger.warning("Turbo lossless mode exited with " + turboRes.exitCode + ", falling back to compatibility re-encode.");
             } catch (Exception turboErr) {
                 logger.warning("Turbo lossless mode failed (" + turboErr.getMessage() + "), falling back to compatibility re-encode.");
             }
@@ -209,17 +220,67 @@ public final class MediaSpeedProcessor {
         }
 
         YoutubeDLRequest compatReq = buildCompatibilityVideoRequest(inputFile, outputFile, speed, voiceBoost);
-        YoutubeDLResponse compatRes = FFmpeg.getInstance().execute(compatReq, processId, (progress, eta, line) -> {
-            if (progressListener != null) {
-                progressListener.onProgress(Math.max(0f, progress), eta, line);
-            }
-            return null;
-        });
+        FfmpegResult compatRes = executeFfmpegRequest(compatReq, processId, progressListener);
 
-        if (compatRes.getExitCode() != 0 || !outputFile.exists() || outputFile.length() == 0) {
-            throw new RuntimeException("FFmpeg video speed processing failed: " + compatRes.getErr());
+        if (compatRes.exitCode != 0 || !outputFile.exists() || outputFile.length() == 0) {
+            throw new RuntimeException("FFmpeg video speed processing failed: " + compatRes.err);
         }
         return outputFile;
+    }
+
+    private static final java.util.concurrent.ConcurrentHashMap<String, Process> ACTIVE_FFMPEG_PROCESSES =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
+    private static final class FfmpegResult {
+        final int exitCode;
+        final String err;
+
+        FfmpegResult(int exitCode, String err) {
+            this.exitCode = exitCode;
+            this.err = err;
+        }
+    }
+
+    @NonNull
+    private static FfmpegResult executeFfmpegRequest(
+            @NonNull YoutubeDLRequest req,
+            @NonNull String processId,
+            @Nullable SpeedProcessListener progressListener) throws Exception {
+        coreUtils.base.BaseApplication app = coreUtils.base.BaseApplication.getInstance();
+        File packagesDir = new File(app.getNoBackupFilesDir(), "youtubedl-android/packages/ffmpeg/usr");
+        File ffmpegBin = new File(packagesDir, "bin/ffmpeg");
+        File ffmpegLibDir = new File(packagesDir, "lib");
+
+        List<String> command = new ArrayList<>();
+        command.add(ffmpegBin.exists() ? ffmpegBin.getAbsolutePath() : "ffmpeg");
+        command.addAll(req.buildCommand());
+
+        ProcessBuilder pb = new ProcessBuilder(command);
+        if (ffmpegLibDir.exists()) {
+            String existingLd = pb.environment().get("LD_LIBRARY_PATH");
+            String ldPath = ffmpegLibDir.getAbsolutePath()
+                    + (existingLd != null && !existingLd.isEmpty() ? ":" + existingLd : "");
+            pb.environment().put("LD_LIBRARY_PATH", ldPath);
+        }
+        pb.redirectErrorStream(true);
+
+        Process process = pb.start();
+        ACTIVE_FFMPEG_PROCESSES.put(processId, process);
+        StringBuilder outputLog = new StringBuilder();
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                new java.io.InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                outputLog.append(line).append('\n');
+                if (progressListener != null) {
+                    progressListener.onProgress(50f, 0L, line);
+                }
+            }
+            int code = process.waitFor();
+            return new FfmpegResult(code, outputLog.toString());
+        } finally {
+            ACTIVE_FFMPEG_PROCESSES.remove(processId);
+        }
     }
 
     @NonNull

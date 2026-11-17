@@ -570,7 +570,7 @@ public final class YtDlpSpeedDownloadEngine {
                     request.addOption("--convert-subs", "srt");
                 }
                 request.addOption("--downloader", "libaria2c.so");
-                request.addOption("--external-downloader-args", "aria2c:"-x 8 -s 8 -k 1M"");
+                request.addOption("--external-downloader-args", "aria2c:-x 8 -s 8 -k 1M");
 
                 if (audioOnly) {
                     request.addOption("-f", "bestaudio[ext=m4a]/bestaudio");
@@ -590,36 +590,42 @@ public final class YtDlpSpeedDownloadEngine {
                     request.addOption("--merge-output-format", "mp4");
                 }
 
-                YoutubeDLResponse response = YoutubeDL.getInstance().execute(
-                        request,
-                        dlProcessId,
-                        (progress, etaInSeconds, line) -> {
-                            float cleanProgress = Math.max(0f, Math.min(100f, progress));
-                            float overallProgress = needsSpeedChange ? (cleanProgress * 0.75f) : cleanProgress;
-                            downloadInfo.progressPercentage = Math.round(overallProgress);
-                            downloadInfo.progressPercentageInFormat = DownloaderUtils.getFormatted(overallProgress) + "%";
-                            downloadInfo.remainingTimeInSec = Math.max(0L, etaInSeconds);
-                            downloadInfo.remainingTimeInFormat = etaInSeconds > 0
-                                    ? TimeFormats.toHumanReadableTime(etaInSeconds)
-                                    : "--:--";
-                            downloadInfo.downloadStatusInfo = String.format(
-                                    Locale.US,
-                                    StringHelper.getText(R.string.status_downloading_pct),
-                                    overallProgress,
-                                    downloadInfo.getFormattedSpeedBadge()
-                            );
-                            DownloadsInfoRepo.updateProgressOnly(downloadInfo);
-                            SpeedDownloadForegroundService.startOrUpdate(downloadInfo.fileName, downloadInfo.downloadStatusInfo, Math.round(overallProgress), ACTIVE_TASK_COUNT.get(), false);
-                            if (listener != null) {
-                                ThreadTask.executeOnMainThread(() ->
-                                        listener.onProgress(downloadId, overallProgress, downloadInfo.downloadStatusInfo));
+                boolean downloadedViaYtDlp = false;
+                try {
+                    YoutubeDLResponse response = YoutubeDL.getInstance().execute(
+                            request,
+                            dlProcessId,
+                            (progress, etaInSeconds, line) -> {
+                                float cleanProgress = Math.max(0f, Math.min(100f, progress));
+                                float overallProgress = needsSpeedChange ? (cleanProgress * 0.75f) : cleanProgress;
+                                downloadInfo.progressPercentage = Math.round(overallProgress);
+                                downloadInfo.progressPercentageInFormat = DownloaderUtils.getFormatted(overallProgress) + "%";
+                                downloadInfo.remainingTimeInSec = Math.max(0L, etaInSeconds);
+                                downloadInfo.remainingTimeInFormat = etaInSeconds > 0
+                                        ? TimeFormats.toHumanReadableTime(etaInSeconds)
+                                        : "--:--";
+                                downloadInfo.downloadStatusInfo = String.format(
+                                        Locale.US,
+                                        StringHelper.getText(R.string.status_downloading_pct),
+                                        overallProgress,
+                                        downloadInfo.getFormattedSpeedBadge()
+                                );
+                                DownloadsInfoRepo.updateProgressOnly(downloadInfo);
+                                SpeedDownloadForegroundService.startOrUpdate(downloadInfo.fileName, downloadInfo.downloadStatusInfo, Math.round(overallProgress), ACTIVE_TASK_COUNT.get(), false);
+                                if (listener != null) {
+                                    ThreadTask.executeOnMainThread(() ->
+                                            listener.onProgress(downloadId, overallProgress, downloadInfo.downloadStatusInfo));
+                                }
+                                return null;
                             }
-                            return null;
-                        }
-                );
+                    );
+                    downloadedViaYtDlp = (response.getExitCode() == 0 && rawTempFile.exists() && rawTempFile.length() > 0);
+                } catch (Exception ytdlpErr) {
+                    logger.warning("yt-dlp execution unavailable, falling back to NewPipe/HTTP stream download: " + ytdlpErr.getMessage());
+                }
 
-                if (response.getExitCode() != 0 || !rawTempFile.exists() || rawTempFile.length() == 0) {
-                    throw new RuntimeException("yt-dlp failed: " + response.getErr());
+                if (!downloadedViaYtDlp) {
+                    downloadStreamViaNewPipeOrHttp(downloadInfo.fileUrl, rawTempFile, audioOnly, needsSpeedChange, downloadInfo, downloadId, listener);
                 }
 
                 if (needsSpeedChange) {
@@ -771,6 +777,74 @@ public final class YtDlpSpeedDownloadEngine {
             info.downloadStatus = DownloadInfo.DOWNLOAD_STATUS_PAUSED;
             info.downloadStatusInfo = StringHelper.getText(R.string.status_paused);
             DownloadsInfoRepo.save(info);
+        }
+    }
+
+    private static void downloadStreamViaNewPipeOrHttp(
+            @NonNull String sourceUrl,
+            @NonNull File targetFile,
+            boolean audioOnly,
+            boolean needsSpeedChange,
+            @NonNull DownloadInfo downloadInfo,
+            long downloadId,
+            @Nullable EngineDownloadListener listener) throws Exception {
+
+        String directUrl = sourceUrl;
+        if (YtSteamExtractor.isYoutubeUrl(sourceUrl)) {
+            StreamInfo info = StreamInfo.getInfo(ServiceList.YouTube, sourceUrl);
+            if (audioOnly && !info.getAudioStreams().isEmpty()) {
+                directUrl = info.getAudioStreams().get(0).getContent();
+            } else if (!info.getVideoStreams().isEmpty()) {
+                directUrl = info.getVideoStreams().get(0).getContent();
+            } else if (!info.getVideoOnlyStreams().isEmpty()) {
+                directUrl = info.getVideoOnlyStreams().get(0).getContent();
+            }
+        }
+
+        java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(directUrl).openConnection();
+        conn.setConnectTimeout(15000);
+        conn.setReadTimeout(30000);
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/124.0.0.0 Mobile Safari/537.36");
+        conn.connect();
+
+        int responseCode = conn.getResponseCode();
+        if (responseCode < 200 || responseCode >= 300) {
+            throw new RuntimeException("HTTP " + responseCode + " when downloading stream");
+        }
+
+        long totalBytes = conn.getContentLengthLong();
+        try (java.io.InputStream in = conn.getInputStream();
+             java.io.FileOutputStream out = new java.io.FileOutputStream(targetFile)) {
+            byte[] buffer = new byte[64 * 1024];
+            long downloaded = 0L;
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+                downloaded += read;
+                if (totalBytes > 0) {
+                    float pct = Math.min(100f, (downloaded * 100f) / totalBytes);
+                    float overallProgress = needsSpeedChange ? (pct * 0.75f) : pct;
+                    downloadInfo.progressPercentage = Math.round(overallProgress);
+                    downloadInfo.progressPercentageInFormat = DownloaderUtils.getFormatted(overallProgress) + "%";
+                    downloadInfo.downloadStatusInfo = String.format(
+                            Locale.US,
+                            StringHelper.getText(R.string.status_downloading_pct),
+                            overallProgress,
+                            downloadInfo.getFormattedSpeedBadge()
+                    );
+                    DownloadsInfoRepo.updateProgressOnly(downloadInfo);
+                    if (listener != null) {
+                        ThreadTask.executeOnMainThread(() ->
+                                listener.onProgress(downloadId, overallProgress, downloadInfo.downloadStatusInfo));
+                    }
+                }
+            }
+        } finally {
+            conn.disconnect();
+        }
+
+        if (!targetFile.exists() || targetFile.length() == 0) {
+            throw new RuntimeException("Downloaded stream file is empty");
         }
     }
 
