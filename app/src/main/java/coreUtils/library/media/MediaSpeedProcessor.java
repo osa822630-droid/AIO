@@ -4,31 +4,37 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.nextgen.R;
 import com.yausername.ffmpeg.FFmpeg;
 import com.yausername.youtubedl_android.YoutubeDL;
 import com.yausername.youtubedl_android.YoutubeDLRequest;
 import com.yausername.youtubedl_android.YoutubeDLResponse;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
 
+import coreUtils.base.BaseApplication;
 import coreUtils.library.process.LoggerUtils;
 import coreUtils.library.process.ThreadTask;
-import com.nextgen.R;
 import coreUtils.library.process.TimeFormats;
 import coreUtils.library.strings.StringHelper;
+import sysModules.ytdlpWrapper.YtDlpLibraryManager;
 
 /**
  * Baked-in Media Speed Processor using FFmpeg.
  * Produces audio (M4A/MP3) and video (MP4) files pre-adjusted to any playback speed (0.25x - 4.0x)
- * while preserving natural voice pitch via WSOLA (atempo filter chain) and supporting zero-transcode
- * Turbo Video mode (-itsscale + -c:v copy) with automatic fallback to ultrafast libx264 re-encoding.
+ * while preserving natural voice pitch via WSOLA (atempo filter chain), optional pitch-safe voice clarity boost
+ * (dynaudnorm), and zero-transcode Turbo Video mode (-itsscale + -c:v copy).
  */
 public final class MediaSpeedProcessor {
 
     private static final LoggerUtils logger = LoggerUtils.from(MediaSpeedProcessor.class);
+    private static final ConcurrentHashMap<String, Process> ACTIVE_FFMPEG_PROCESSES = new ConcurrentHashMap<>();
 
     private MediaSpeedProcessor() {}
 
@@ -52,10 +58,6 @@ public final class MediaSpeedProcessor {
         void onFailure(@NonNull String errorMessage);
     }
 
-    /**
-     * Builds an FFmpeg atempo filter chain for any speed in [0.25, 4.0].
-     * Guarantees compatibility across all FFmpeg builds by chaining [0.5, 2.0] stages.
-     */
     @NonNull
     public static String buildAtempoFilterChain(float speed) {
         float clamped = Math.max(0.25f, Math.min(4.0f, speed));
@@ -83,11 +85,6 @@ public final class MediaSpeedProcessor {
         return String.join(",", stages);
     }
 
-    /**
-     * Builds the complete FFmpeg audio filter chain combining pitch-preserving atempo
-     * with optional dynamic loudness normalization (dynaudnorm) which boosts & evens voice
-     * clarity without altering pitch.
-     */
     @NonNull
     public static String buildAudioFilterChain(float speed, boolean voiceBoost) {
         String base = buildAtempoFilterChain(speed);
@@ -100,17 +97,11 @@ public final class MediaSpeedProcessor {
         return base + ",dynaudnorm=f=150:g=15";
     }
 
-    /**
-     * Calculates the new duration in seconds after applying the target playback speed.
-     */
     public static long calculateAdjustedDurationSeconds(long originalDurationSeconds, float speed) {
         if (originalDurationSeconds <= 0 || speed <= 0.05f) return 0L;
         return Math.max(1L, Math.round(originalDurationSeconds / speed));
     }
 
-    /**
-     * Formats a human-readable comparison string between original duration and sped-up duration.
-     */
     @NonNull
     public static String formatDurationComparison(long originalDurationSeconds, float speed) {
         String spdLabel = String.format(Locale.US, "%.2fx", speed).replaceAll("0+x$", "x").replaceAll("\\.x$", "x");
@@ -130,10 +121,6 @@ public final class MediaSpeedProcessor {
         return origStr;
     }
 
-    /**
-     * Synchronously executes FFmpeg speed transformation (intended to be called from a background thread).
-     * Automatically falls back from TURBO_LOSSLESS_VIDEO to COMPATIBILITY_REENCODE_VIDEO if stream copy fails.
-     */
     @NonNull
     public static File executeSpeedTransformSync(
             @NonNull File inputFile,
@@ -169,29 +156,10 @@ public final class MediaSpeedProcessor {
             return outputFile;
         }
 
+        YtDlpLibraryManager.awaitReady(20);
+
         if (outputFile.exists()) {
             outputFile.delete();
-        }
-
-        coreUtils.base.BaseApplication app = coreUtils.base.BaseApplication.getInstance();
-        File ffmpegBin = app != null
-                ? new File(app.getNoBackupFilesDir(), "youtubedl-android/packages/ffmpeg/usr/bin/ffmpeg")
-                : null;
-        if (ffmpegBin == null || !ffmpegBin.exists()) {
-            if (progressListener != null) {
-                progressListener.onProgress(50f, 0L, "Processing media...");
-            }
-            if (!inputFile.equals(outputFile)) {
-                java.nio.file.Files.copy(
-                        inputFile.toPath(),
-                        outputFile.toPath(),
-                        java.nio.file.StandardCopyOption.REPLACE_EXISTING
-                );
-            }
-            if (progressListener != null) {
-                progressListener.onProgress(100f, 0L, "Complete");
-            }
-            return outputFile;
         }
 
         if (mode == SpeedMode.AUDIO_ONLY) {
@@ -228,9 +196,6 @@ public final class MediaSpeedProcessor {
         return outputFile;
     }
 
-    private static final java.util.concurrent.ConcurrentHashMap<String, Process> ACTIVE_FFMPEG_PROCESSES =
-            new java.util.concurrent.ConcurrentHashMap<>();
-
     private static final class FfmpegResult {
         final int exitCode;
         final String err;
@@ -246,7 +211,7 @@ public final class MediaSpeedProcessor {
             @NonNull YoutubeDLRequest req,
             @NonNull String processId,
             @Nullable SpeedProcessListener progressListener) throws Exception {
-        coreUtils.base.BaseApplication app = coreUtils.base.BaseApplication.getInstance();
+        BaseApplication app = BaseApplication.getInstance();
         File packagesDir = new File(app.getNoBackupFilesDir(), "youtubedl-android/packages/ffmpeg/usr");
         File ffmpegBin = new File(packagesDir, "bin/ffmpeg");
         File ffmpegLibDir = new File(packagesDir, "lib");
@@ -267,8 +232,7 @@ public final class MediaSpeedProcessor {
         Process process = pb.start();
         ACTIVE_FFMPEG_PROCESSES.put(processId, process);
         StringBuilder outputLog = new StringBuilder();
-        try (java.io.BufferedReader reader = new java.io.BufferedReader(
-                new java.io.InputStreamReader(process.getInputStream()))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 outputLog.append(line).append('\n');
@@ -344,9 +308,6 @@ public final class MediaSpeedProcessor {
         return req;
     }
 
-    /**
-     * Asynchronously converts the speed of a local audio or video file on disk.
-     */
     @NonNull
     public static ThreadTask<File, Float> processLocalFileSpeedAsync(
             @Nullable LifecycleOwner lifecycleOwner,
@@ -386,11 +347,8 @@ public final class MediaSpeedProcessor {
                                         listener.onProgress(percentage, etaSeconds, statusLine));
                             }
 
-                            @Override
-                            public void onSuccess(@NonNull File out, float appliedSpeed) {}
-
-                            @Override
-                            public void onFailure(@NonNull String errorMessage) {}
+                            @Override public void onSuccess(@NonNull File out, float appliedSpeed) {}
+                            @Override public void onFailure(@NonNull String errorMessage) {}
                         }
                 ))
                 .withResultTask(result -> listener.onSuccess(result, speed))
@@ -402,6 +360,10 @@ public final class MediaSpeedProcessor {
     }
 
     public static void cancelProcess(@NonNull String processId) {
+        Process proc = ACTIVE_FFMPEG_PROCESSES.remove(processId);
+        if (proc != null) {
+            proc.destroy();
+        }
         try {
             YoutubeDL.getInstance().destroyProcessById(processId);
         } catch (Exception e) {

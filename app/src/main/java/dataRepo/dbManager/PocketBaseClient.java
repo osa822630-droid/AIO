@@ -54,6 +54,19 @@ public abstract class PocketBaseClient {
 	 * Escapes single quotes, backslashes, and control characters to prevent PocketBase filter injection.
 	 */
 	@NonNull
+	private static final java.util.Set<String> ALLOWED_FILTER_FIELDS = new java.util.HashSet<>(java.util.Arrays.asList(
+		"id", "deviceId", "userDeviceId", "isActive"
+	));
+
+	@NonNull
+	public static String filterEq(@NonNull String field, @Nullable String value) {
+		if (!ALLOWED_FILTER_FIELDS.contains(field)) {
+			throw new IllegalArgumentException("Disallowed PocketBase filter field: " + field);
+		}
+		return field + "='" + sanitizeFilterValue(value) + "'";
+	}
+
+	@NonNull
 	public static String sanitizeFilterValue(@Nullable String raw) {
 		if (raw == null) return "";
 		return raw.replace("\\", "\\\\").replace("'", "\\'").replace("\"", "\\\"").replaceAll("[\\r\\n\\t]", "");

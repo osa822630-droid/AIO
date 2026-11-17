@@ -57,7 +57,7 @@ import userInterface.mainScreen.MainActivity;
  * <ul>
  * <li>Displays latest update version information and changelog.</li>
  * <li>Manages APK download with progress tracking (percentage, speed, time).</li>
- * <li>Requests storage permission if needed (MANAGE_EXTERNAL_STORAGE on API 30+).</li>
+ * <li>Requests storage permission if needed (SCOPED_STORAGE on API 30+).</li>
  * <li>Handles download errors and provides user feedback via error messages.</li>
  * <li>Launches APK installer upon successful download completion.</li>
  * <li>Supports download cancellation via a custom progress dialog.</li>
@@ -566,13 +566,9 @@ public class AppUpdaterActivity extends BaseActivity<ActivityUpdater1Binding> {
 		UpdateInfo updateInfo = getUpdateInfoPackageFromIntent();
 		if (updateInfo == null) return;
 		
-		AppDirsValidator.performValidation();
-		File applicationDirectory = AppDirsValidator.getApplicationDirectory();
-		if (applicationDirectory == null) return;
-		
-		String subDirName = StringHelper.getText(R.string.title_tubeaio_programs);
-		File appProgramsFolder = new File(applicationDirectory, subDirName);
-		File programsFolder = Objects.requireNonNull(appProgramsFolder);
+		File programsFolder = getExternalFilesDir("updates");
+		if (programsFolder == null) programsFolder = new File(getCacheDir(), "updates");
+		if (!programsFolder.exists()) programsFolder.mkdirs();
 		getViewModel().downloadUpdatedAPK(updateInfo, programsFolder, this);
 	}
 	
@@ -641,7 +637,7 @@ public class AppUpdaterActivity extends BaseActivity<ActivityUpdater1Binding> {
 	 * immediately. If not, the user is prompted to grant storage permission via
 	 * {@link #promptForStorageAccess()}.
 	 *
-	 * <p>Full file system access (MANAGE_EXTERNAL_STORAGE) is required on Android
+	 * <p>Full file system access (SCOPED_STORAGE) is required on Android
 	 * 11+ to write APK files to external storage directories. This method ensures
 	 * the necessary permission is obtained before proceeding with the download.
 	 *
@@ -650,8 +646,7 @@ public class AppUpdaterActivity extends BaseActivity<ActivityUpdater1Binding> {
 	 * @see #showDownloaderDialog()
 	 */
 	private void validateAndStartDownload() {
-		if (!FileStorageUtility.hasFullFileSystemAccess(this)) promptForStorageAccess();
-		else showDownloaderDialog();
+		showDownloaderDialog();
 	}
 	
 	/**

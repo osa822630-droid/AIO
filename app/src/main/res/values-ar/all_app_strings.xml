@@ -461,4 +461,10 @@
   <string name="tab_speed_studio">استوديو التحميل</string>
   <string name="tab_local_speed">تسريع محلي</string>
   <string name="tab_downloads">التحميلات</string>
+  <string name="app_name">TubeAIO Speed</string>
+  <string name="err_invalid_url">الرجاء إدخال رابط صحيح يبدأ بـ http أو https</string>
+  <string name="err_paste_url_first">الرجاء لصق رابط الفيديو أو الصوت أولاً</string>
+  <string name="err_playlist_empty">لم يتم العثور على مقاطع متاحة في قائمة التشغيل</string>
+  <string name="playlist_items_count_fmt">تم تحديد %1$d من أصل %2$d مقطع</string>
+  <string name="msg_playlist_started_fmt">بدأ تحميل %1$d مقطع من القائمة بسرعة %2$s</string>
 </resources>

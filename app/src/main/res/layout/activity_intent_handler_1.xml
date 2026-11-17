@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_8"
-        android:background="@color/style_color_chip_selected"
+        android:background="@drawable/bg_m3e_badge"
         android:fontFamily="@font/font_family_semibold"
         android:paddingStart="@dimen/_8"
         android:paddingTop="@dimen/_4"
@@ -76,7 +76,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="@dimen/_12"
-      android:background="@color/style_color_card"
+      android:background="@drawable/bg_m3e_card"
       android:gravity="center_vertical"
       android:orientation="horizontal"
       android:padding="@dimen/_10">

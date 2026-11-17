@@ -494,7 +494,7 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
 	
 	/**
 	 * Determines whether the app has been granted full file system access via the
-	 * {@link Manifest.permission#MANAGE_EXTERNAL_STORAGE} permission. This method
+	 * {@link Manifest.permission#SCOPED_STORAGE} permission. This method
 	 * delegates to {@link FileStorageUtility#hasFullFileSystemAccess(Context)} for the
 	 * actual permission verification logic.
 	 *
@@ -510,12 +510,11 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
 	 * @see FileStorageUtility#hasFullFileSystemAccess(Context)
 	 */
 	protected boolean isAllFilesAccessAllowed() {
-		Context applicationContext = getApplicationContext();
-		return FileStorageUtility.hasFullFileSystemAccess(applicationContext);
+		return isStoragePermissionAllowed();
 	}
 	
 	/**
-	 * Requests the MANAGE_EXTERNAL_STORAGE permission, which grants broad access to all
+	 * Requests the SCOPED_STORAGE permission, which grants broad access to all
 	 * files on shared external storage. This method first attempts to launch the
 	 * platform's settings page for the app-specific "All Files Access" permission using
 	 * {@link Settings#ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION}.
@@ -531,17 +530,7 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
 	 * @see Settings#ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
 	 */
 	protected void requestForAllFilesAccess() {
-		try {
-			Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-			intent.addCategory("android.intent.category.DEFAULT");
-			intent.setData(Uri.parse(String.format("package:%s", getPackageName())));
-			startActivity(intent);
-		} catch (Exception error) {
-			logger.error("Error requesting all file access: ", error);
-			Intent intent = new Intent();
-			intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-			startActivity(intent);
-		}
+		requestForStoragePermission();
 	}
 	
 	/**

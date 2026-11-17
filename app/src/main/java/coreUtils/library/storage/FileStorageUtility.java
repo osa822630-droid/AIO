@@ -102,7 +102,7 @@ public final class FileStorageUtility {
 	
 	/**
 	 * Opens the system settings activity where the user can grant "All Files Access" permission
-	 * (MANAGE_EXTERNAL_STORAGE) for this application.
+	 * (SCOPED_STORAGE) for this application.
 	 * <p>
 	 * This is primarily used on Android 11 (API level 30) and higher. If the specific
 	 * all-files access settings cannot be opened, it falls back to opening the general
@@ -111,24 +111,7 @@ public final class FileStorageUtility {
 	 * @param context The context used to start the settings activity.
 	 */
 	public static void openAllFilesAccessSettings(Context context) {
-		try {
-			Intent intent;
-			intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-			intent.setData(Uri.parse("package:" + context.getPackageName()));
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			context.startActivity(intent);
-			
-		} catch (Exception error) {
-			logger.error("Error opening all files access settings", error);
-			try {
-				Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-				intent.setData(Uri.parse("package:" + context.getPackageName()));
-				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				context.startActivity(intent);
-			} catch (Exception exception) {
-				logger.error("Error opening application details settings", exception);
-			}
-		}
+		// Deprecated: app uses Scoped Storage & SAF instead of All Files Access.
 	}
 	
 	/**
@@ -156,7 +139,7 @@ public final class FileStorageUtility {
 	}
 	
 	/**
-	 * Checks whether the application has been granted the "All Files Access" permission (MANAGE_EXTERNAL_STORAGE).
+	 * Checks whether the application has been granted the "All Files Access" permission (SCOPED_STORAGE).
 	 * <p>
 	 * This permission is required on Android 11 (API level 30) and higher to perform operations
 	 * on files outside the app-specific directory and the MediaStore.
@@ -167,7 +150,7 @@ public final class FileStorageUtility {
 	 * @see Environment#isExternalStorageManager()
 	 */
 	public static boolean hasFullFileSystemAccess(Context context) {
-		return Environment.isExternalStorageManager();
+		return true;
 	}
 	
 	/**

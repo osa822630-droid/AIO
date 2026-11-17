@@ -1,118 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <!-- Eye-Friendly Day Palette (Soft Slate & Calm Royal Blue / Teal) -->
-  <color name="style_color_primary">#1D4ED8</color>
-  <color name="style_color_primary_variant">#1E40AF</color>
-  <color name="style_color_primary_dark">#1E3A8A</color>
-  <color name="style_color_primary_light">#DBEAFE</color>
-  <color name="style_color_primary_container">#EFF6FF</color>
+    <!-- Material 3 Expressive Day Palette (Soft Alabaster & Deep Royal Indigo/Cyan) -->
+    <color name="style_color_primary">#FF0284C7</color>
+    <color name="style_color_primary_dark">#FF0369A1</color>
+    <color name="style_color_primary_light">#FF38BDF8</color>
+    <color name="style_color_secondary">#FF4F46E5</color>
+    <color name="style_color_accent">#FF0EA5E9</color>
 
-  <color name="style_color_secondary">#0D9488</color>
-  <color name="style_color_secondary_variant">#0F766E</color>
-  <color name="style_color_secondary_container">#CCFBF1</color>
+    <color name="style_color_background">#FFF4F7FB</color>
+    <color name="style_color_surface">#FFFFFFFF</color>
+    <color name="style_color_surface_elevated">#FFFFFFFF</color>
+    <color name="style_color_card">#FFFFFFFF</color>
+    <color name="style_color_card_selected">#FFEFF6FF</color>
+    <color name="style_color_card_border">#FFDCE5F2</color>
 
-  <color name="style_color_background">#F4F6FA</color>
-  <color name="style_color_background_secondary">#EBF0F7</color>
+    <color name="style_color_text_primary">#FF0F172A</color>
+    <color name="style_color_text_secondary">#FF475569</color>
+    <color name="style_color_text_tertiary">#FF64748B</color>
+    <color name="style_color_text_hint">#FF94A3B8</color>
+    <color name="style_color_text_inverse">#FFFFFFFF</color>
 
-  <color name="style_color_surface">#FFFFFF</color>
-  <color name="style_color_surface_variant">#F1F5F9</color>
-  <color name="style_color_surface_1">#FFFFFF</color>
-  <color name="style_color_surface_2">#F8FAFC</color>
-  <color name="style_color_surface_3">#F1F5F9</color>
+    <color name="style_color_input_background">#FFF8FAFC</color>
+    <color name="style_color_input_border">#FFCBD5E1</color>
+    <color name="style_color_chip_selected">#FFE0F2FE</color>
+    <color name="style_color_chip_unselected">#FFF1F5F9</color>
 
-  <color name="style_color_card">#FFFFFF</color>
-  <color name="style_color_card_stroke">#E2E8F0</color>
-  <color name="style_color_card_selected">#EFF6FF</color>
-  <color name="style_color_card_pressed">#E2E8F0</color>
+    <color name="style_color_divider">#FFE2E8F0</color>
+    <color name="style_color_ripple">#260284C7</color>
+    <color name="style_color_shadow_dark">#990F172A</color>
+    <color name="style_color_transparent">#00000000</color>
 
-  <color name="style_color_text_primary">#0F172A</color>
-  <color name="style_color_text_secondary">#475569</color>
-  <color name="style_color_text_tertiary">#64748B</color>
-  <color name="style_color_text_hint">#94A3B8</color>
-  <color name="style_color_text_disabled">#CBD5E1</color>
-  <color name="style_color_text_inverse">#FFFFFF</color>
-  <color name="style_color_text_link">#1D4ED8</color>
-
-  <color name="style_color_icon">#1D4ED8</color>
-  <color name="style_color_icon_primary">#0F172A</color>
-  <color name="style_color_icon_secondary">#475569</color>
-  <color name="style_color_icon_hint">#94A3B8</color>
-  <color name="style_color_icon_disabled">#CBD5E1</color>
-  <color name="style_color_icon_inverse">#FFFFFF</color>
-
-  <color name="style_color_border">#CBD5E1</color>
-  <color name="style_color_border_light">#E2E8F0</color>
-  <color name="style_color_border_dark">#94A3B8</color>
-  <color name="style_color_border_focus">#1D4ED8</color>
-  <color name="style_color_border_selected">#1D4ED8</color>
-
-  <color name="style_color_input_background">#F1F5F9</color>
-  <color name="style_color_input_border">#CBD5E1</color>
-  <color name="style_color_input_border_focused">#1D4ED8</color>
-  <color name="style_color_input_border_error">#DC2626</color>
-  <color name="style_color_input_hint">#64748B</color>
-
-  <color name="style_color_button_primary">#1D4ED8</color>
-  <color name="style_color_button_primary_pressed">#1E40AF</color>
-  <color name="style_color_button_primary_disabled">#93C5FD</color>
-  <color name="style_color_button_primary_text">#FFFFFF</color>
-
-  <color name="style_color_button_secondary">#E2E8F0</color>
-  <color name="style_color_button_secondary_pressed">#CBD5E1</color>
-  <color name="style_color_button_secondary_text">#0F172A</color>
-
-  <color name="style_color_button_outline">#1D4ED8</color>
-  <color name="style_color_button_outline_disabled">#CBD5E1</color>
-
-  <color name="style_color_divider">#E2E8F0</color>
-  <color name="style_color_divider_light">#F1F5F9</color>
-
-  <color name="style_color_success">#16A34A</color>
-  <color name="style_color_success_container">#DCFCE7</color>
-  <color name="style_color_success_text">#15803D</color>
-  <color name="style_color_success_border">#86EFAC</color>
-
-  <color name="style_color_warning">#D97706</color>
-  <color name="style_color_warning_container">#FEF3C7</color>
-  <color name="style_color_warning_text">#B45309</color>
-  <color name="style_color_warning_border">#FCD34D</color>
-
-  <color name="style_color_error">#DC2626</color>
-  <color name="style_color_error_container">#FEE2E2</color>
-  <color name="style_color_error_text">#B91C1C</color>
-  <color name="style_color_error_border">#FCA5A5</color>
-
-  <color name="style_color_info">#0284C7</color>
-  <color name="style_color_info_container">#E0F2FE</color>
-  <color name="style_color_info_text">#0369A1</color>
-  <color name="style_color_info_border">#7DD3FC</color>
-
-  <color name="style_color_chip_background">#E2E8F0</color>
-  <color name="style_color_chip_selected">#DBEAFE</color>
-  <color name="style_color_chip_text">#1E40AF</color>
-
-  <color name="style_color_badge">#DC2626</color>
-  <color name="style_color_badge_text">#FFFFFF</color>
-
-  <color name="style_color_navigation_background">#FFFFFF</color>
-  <color name="style_color_navigation_icon">#64748B</color>
-  <color name="style_color_navigation_icon_selected">#1D4ED8</color>
-
-  <color name="style_color_ripple">#221D4ED8</color>
-  <color name="style_color_ripple_light">#111D4ED8</color>
-
-  <color name="style_color_overlay_light">#14000000</color>
-  <color name="style_color_overlay_medium">#33000000</color>
-  <color name="style_color_overlay_dark">#66000000</color>
-
-  <color name="style_color_shadow">#1A0F172A</color>
-  <color name="style_color_shadow_medium">#330F172A</color>
-  <color name="style_color_shadow_dark">#800F172A</color>
-
-  <color name="style_transparent_white">#AEFFFFFF</color>
-  <color name="style_color_transparent">#00000000</color>
-  <color name="style_color_transparent_dark">#14000000</color>
-  <color name="style_color_transparent_darker">#66000000</color>
-
-  <color name="ic_launcher_background">#1D4ED8</color>
+    <color name="style_color_success">#FF059669</color>
+    <color name="style_color_warning">#FFD97706</color>
+    <color name="style_color_error">#FFDC2626</color>
+    <color name="style_color_surface_variant">#FFF1F5F9</color>
 </resources>

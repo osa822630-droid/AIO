@@ -3,10 +3,13 @@ plugins {
 }
 
 apply plugin: 'io.objectbox'
+
+def targetAbi = project.hasProperty('targetAbi') ? project.property('targetAbi').toString() : 'arm64-v8a'
+
 android {
     namespace 'com.nextgen'
     compileSdk 36
-        buildTypes.release.ndk.debugSymbolLevel = "SYMBOL_TABLE"
+    buildTypes.release.ndk.debugSymbolLevel = "SYMBOL_TABLE"
 
     buildFeatures {
         buildConfig true
@@ -18,27 +21,34 @@ android {
         minSdk 24
         //noinspection OldTargetApi
         targetSdk 36
-        versionCode 26
-        versionName "2026.04.28"
+        versionCode 27
+        versionName "2026.11.17"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
-        ndk { abiFilters "x86", "x86_64", "armeabi-v7a", "arm64-v8a" }
+        ndk {
+            abiFilters targetAbi, "x86_64"
+        }
     }
 
     signingConfigs {
         debugConfig {
-            storeFile file("${rootDir}/debug.keystore")
-            storePassword "android"
-            keyAlias "androiddebugkey"
-            keyPassword "android"
+            def ksFile = file("${rootDir}/debug.keystore")
+            if (ksFile.exists()) {
+                storeFile ksFile
+                storePassword "android"
+                keyAlias "androiddebugkey"
+                keyPassword "android"
+            }
         }
     }
 
     buildTypes {
         debug {
-            signingConfig signingConfigs.debugConfig
+            if (file("${rootDir}/debug.keystore").exists()) {
+                signingConfig signingConfigs.debugConfig
+            }
             debuggable true
             minifyEnabled false
             buildConfigField "boolean", "IS_DEBUG_MODE_ON", "true"
@@ -56,11 +66,6 @@ android {
     packagingOptions {
         jniLibs {
             useLegacyPackaging = true
-            excludes += [
-                '**/libffmpeg.zip.so',
-                '**/libaria2c.zip.so',
-                '**/libpython.zip.so'
-            ]
         }
         resources {
             excludes += ['META-INF/LICENSE', 'META-INF/NOTICE', 'META-INF/*.kotlin_module']
@@ -134,5 +139,4 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.androidx.test.ext.junit
     androidTestImplementation libs.espresso.core
-    // debugImplementation libs.leak.canary
 }

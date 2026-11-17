@@ -45,6 +45,7 @@ import dataRepo.appConfigs.AppConfigsRepo;
 import dataRepo.downloads.DownloadInfo;
 import dataRepo.downloads.DownloadsInfoRepo;
 import sysModules.newPipeLib.parsers.YtSteamExtractor;
+import sysModules.ytdlpWrapper.YtDlpLibraryManager;
 
 /**
  * Production Download, Playlist Extraction, & Speed Post-Processing Engine.
@@ -185,7 +186,9 @@ public final class YtDlpSpeedDownloadEngine {
                             }
                         } catch (Exception ignored) {}
                     }
+                    YtDlpLibraryManager.awaitReady(20);
                     YoutubeDLRequest req = new YoutubeDLRequest(url);
+                    req.addOption("--extractor-args", "youtube:player_client=android,web");
                     req.addOption("--no-playlist");
                     req.addOption("-g");
                     req.addOption("-f", audioOnly ? "bestaudio[ext=m4a]/bestaudio" : "best[ext=mp4]/best");
@@ -236,7 +239,9 @@ public final class YtDlpSpeedDownloadEngine {
                         }
                     }
 
+                    YtDlpLibraryManager.awaitReady(20);
                     YoutubeDLRequest infoReq = new YoutubeDLRequest(cleanUrl);
+                    infoReq.addOption("--extractor-args", "youtube:player_client=android,web");
                     infoReq.addOption("--no-playlist");
                     VideoInfo videoInfo = YoutubeDL.getInstance().getInfo(infoReq);
                     if (videoInfo == null) {
@@ -303,7 +308,9 @@ public final class YtDlpSpeedDownloadEngine {
                     }
 
                     // Universal yt-dlp flat-playlist JSON fallback
+                    YtDlpLibraryManager.awaitReady(20);
                     YoutubeDLRequest req = new YoutubeDLRequest(cleanUrl);
+                    req.addOption("--extractor-args", "youtube:player_client=android,web");
                     req.addOption("--flat-playlist");
                     req.addOption("--dump-single-json");
                     YoutubeDLResponse res = YoutubeDL.getInstance().execute(req, "pl_" + System.currentTimeMillis(), null);
@@ -559,7 +566,9 @@ public final class YtDlpSpeedDownloadEngine {
                 downloadInfo.downloadStatusInfo = StringHelper.getText(R.string.status_downloading);
                 DownloadsInfoRepo.save(downloadInfo);
 
+                YtDlpLibraryManager.awaitReady(20);
                 YoutubeDLRequest request = new YoutubeDLRequest(downloadInfo.fileUrl);
+                request.addOption("--extractor-args", "youtube:player_client=android,web");
                 request.addOption("--no-mtime");
                 request.addOption("--no-playlist");
                 request.addOption("-o", rawTempFile.getAbsolutePath());

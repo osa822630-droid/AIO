@@ -202,7 +202,7 @@ public final class AppUserCloud extends PocketBaseClient {
 	public Object getField(@NonNull String serverId,
 	                       @NonNull String field,
 	                       @NonNull String deviceId) {
-		JSONObject result = query("id='" + sanitizeFilterValue(serverId) + "'", field, deviceId);
+		JSONObject result = query(filterEq("id", serverId), field, deviceId);
 		return result != null ? result.opt(field) : null;
 	}
 	
@@ -225,7 +225,7 @@ public final class AppUserCloud extends PocketBaseClient {
 	@Nullable
 	public JSONObject getUserByDeviceId(@NonNull String deviceId) {
 		String deviceIdField = AppUser.POCKETBASE_REMOTE_DEVICE_ID_FIELD;
-		return query(deviceIdField + "='" + sanitizeFilterValue(deviceId) + "'", null, deviceId);
+		return query(filterEq(deviceIdField, deviceId), null, deviceId);
 	}
 	
 	/**

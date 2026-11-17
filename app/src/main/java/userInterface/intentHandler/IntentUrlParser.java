@@ -45,7 +45,9 @@ public final class IntentUrlParser {
 
     @Nullable
     public static String extractFirstUrlFromText(@Nullable String rawText) {
-        if (rawText == null || rawText.trim().isEmpty()) return null;
+        if (rawText == null || rawText.trim().isEmpty() || rawText.length() > 2048) return null;
+        String lower = rawText.trim().toLowerCase(Locale.US);
+        if (lower.startsWith("javascript:") || lower.startsWith("file:") || lower.startsWith("intent:") || lower.startsWith("content:")) return null;
 
         try {
             String[] links = URLUtility.extractLinks(rawText);

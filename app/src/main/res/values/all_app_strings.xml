@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="app_name" translatable="false">TubeAIO</string>
   <string name="label__" translatable="false">__</string>
   <string name="title_app_name" translatable="false">TubeAIO</string>
   <string name="label_app_name_full" translatable="false">Tube AIO - NextGen</string>
@@ -467,9 +466,10 @@ Paste any link on the Home screen or share a link to download at your chosen spe
   <string name="tab_speed_studio">Speed Studio</string>
   <string name="tab_local_speed">Local Speed</string>
   <string name="tab_downloads">Downloads</string>
-  <string name="msg_playlist_started_fmt">Started %1$d playlist downloads at %2$s</string>
-  <string name="playlist_items_count_fmt">%1$d / %2$d selected</string>
-  <string name="err_invalid_url">Please enter a valid media or playlist URL</string>
-  <string name="err_paste_url_first">Please paste a link first</string>
-  <string name="err_playlist_empty">Please select at least one item from the playlist</string>
+  <string name="app_name">TubeAIO Speed</string>
+  <string name="err_invalid_url">Please enter a valid http or https link</string>
+  <string name="err_paste_url_first">Please paste a video or audio link first</string>
+  <string name="err_playlist_empty">No playable items found in this playlist</string>
+  <string name="playlist_items_count_fmt">Selected %1$d of %2$d items</string>
+  <string name="msg_playlist_started_fmt">Started downloading %1$d playlist items at %2$s</string>
 </resources>
